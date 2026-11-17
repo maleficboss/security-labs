@@ -1,18 +1,9 @@
-cd Downloads to change directory into the downloads folder
-ls to llist folders in the directory
-sudo openvpn starting.ovpn to start the openvpn 
-mkdir -p ~/security-labs/htb/meow to create a dirsctory for notes
-nano ~/security-labs/htb/meow/notes.md to create the notes.md file
+# HTB Starting Point: Meow (Tier 0, Linux)
 
-Initialization Sequence Completed means connected, and that tab has to stay open.
-tun0 = 10.10.15.94, your address on HTB’s network.
-The ping got 0% loss with ttl=63, which suggests a Linux target.
-Mistake: typing ` instead of ~ gave a bquote> prompt. Ctrl+C gets you out.
-Mistake, if it’s what happened: the .ovpn was downloaded on Windows, so Kali couldn’t see it.
-
-root should never be exposed over the network, and telnet should never be used at all. It sends everthing including passwords in plain text.
-
-
+## Summary
+Meow is a Linux box running telnet on port 23. Its root account had no password, so a telnet
+login as `root` with a blank password gave access to the full root shell. The single most important fix is
+turning telnet off and using SSH, which would have closed the plain-text path in one step.
 
 ## Setup
 - Target: HTB Starting Point, Meow (Tier 0, Linux). Attack machine: Kali VM in VirtualBox.
@@ -23,14 +14,6 @@ root should never be exposed over the network, and telnet should never be used a
 - Checked my address on HTB's network: `ip a show tun0`.
 - Checked the target was reachable: `ping -c 3 <target IP>`. Replies came back with `ttl=63`.
   Linux usually starts at 64 and one router took 1 off, so the target is likely Linux.
-
-## Mistakes and lessons
-- Downloaded the VPN file in Windows first. Kali is a separate machine so it  couldn't see it;
-  downloading it from Firefox inside Kali fixed it.
-- `ping -c <target IP>` resulted in  "invalid argument". `-c` needs a number straight after it, so
-  ping read the IP as the count. `ping -c 3 <target IP>` worked.
-- Typed a backtick instead of `~` and the shell waited for a closing backtick (the `bquote>`
-  prompt); Ctrl+C got me out.
 
 ## Recon
 - Scanned the target for open ports and service versions: `nmap -sV <target IP>`
@@ -54,7 +37,10 @@ Three separate misconfigurations had to line up. Fixing any one would have stopp
    you log in as a normal user and raise privileges only when needed.
 3. root had no password. Every account, root above all, needs a strong one.
 
-## Summary
-Meow is a Linux box running telnet on port 23. Its root account had no password, so a telnet
-login as `root` with a blank password gave access to the full root shell. The single most important fix is
-turning telnet off and using SSH, which would have closed the plain-text path in one step.
+## Mistakes and lessons
+- Downloaded the VPN file in Windows first. Kali is a separate machine so it  couldn't see it;
+  downloading it from Firefox inside Kali fixed it.
+- `ping -c <target IP>` resulted in  "invalid argument". `-c` needs a number straight after it, so
+  ping read the IP as the count. `ping -c 3 <target IP>` worked.
+- Typed a backtick instead of `~` and the shell waited for a closing backtick (the `bquote>`
+  prompt); Ctrl+C got me out.
